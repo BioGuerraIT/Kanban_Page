@@ -17,6 +17,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    setColumns(initialColumns); // Reset columns to initial state
     const token = localStorage.getItem("token");
     axios
       .get("http://127.0.0.1:5000/tasks", {
@@ -25,7 +26,7 @@ const Dashboard = () => {
         },
       })
       .then((response) => {
-        const fetchedTasks = response.data; // Assuming the API returns an array directly
+        const fetchedTasks = response.data;
         const newColumns = { ...initialColumns };
         fetchedTasks.forEach((task) => {
           newColumns[task.status.toLowerCase()].push(task);
@@ -70,7 +71,7 @@ const Dashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate('/login');
+    navigate("/login");
   };
 
   return (
