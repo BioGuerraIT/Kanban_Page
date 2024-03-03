@@ -22,7 +22,7 @@ export default function Register() {
             const response = await axios.post('http://127.0.0.1:5000/register', formData);
             console.log(response.data);
             // Redirect user to login page or dashboard after successful registration
-            navigate('/Login');
+            navigate('/login');
         } catch (error) {
             if (error.response) {
                 // The request was made and the server responded with a status code

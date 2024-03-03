@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../styles/Dashboard.css";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const initialColumns = {
   todo: [],
@@ -69,13 +69,17 @@ const Dashboard = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token'); // Remove the token from localStorage
+    localStorage.removeItem("token");
+    navigate('/login');
   };
 
   return (
     <div className="dashboard">
       <h1>Kanban Board</h1>
-      <button onClick={handleLogout} className="logout-button">Logout</button> {/* Logout Button */}
+      <button onClick={handleLogout} className="logout-button">
+        Logout <i className="fas fa-sign-out-alt"></i>{" "}
+      </button>
+
       <form onSubmit={handleAddTask} className="add-task-form">
         <input
           type="text"
@@ -90,7 +94,9 @@ const Dashboard = () => {
           placeholder="Task Description"
           required
         />
-        <button type="submit">Add Task</button>
+        <button type="submit" className="add-task-button">
+          Add Task
+        </button>
       </form>
       <div className="kanban-columns">
         {Object.entries(columns).map(([status, tasks]) => (
@@ -100,7 +106,6 @@ const Dashboard = () => {
               <div key={task.id} className="task-card">
                 <h3>{task.title}</h3>
                 <p>{task.description}</p>
-                {/* Add buttons or drag-and-drop logic to move tasks between columns */}
               </div>
             ))}
           </div>
