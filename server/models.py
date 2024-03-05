@@ -17,16 +17,22 @@ class Task(db.Model):
     status = db.Column(db.String(50), nullable=False, default='todo')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     parent_id = db.Column(db.Integer, db.ForeignKey('task.id'), nullable=True)
-    
+
     subtasks = db.relationship('Task', backref=db.backref('parent', remote_side=[id]), lazy='dynamic')
 
-    def to_dict(self):
-        return {
+    # Recursive to_dict method
+    def to_dict(self, include_subtasks=True, level=0):
+        task_dict = {
             "id": self.id,
             "title": self.title,
             "description": self.description,
-            "status": self.status
+            "status": self.status,
+            "user_id": self.user_id,
+            "parent_id": self.parent_id
         }
+        if include_subtasks and level < 3:  # Limit depth to 3 levels
+            task_dict["subtasks"] = [subtask.to_dict(include_subtasks=True, level=level+1) for subtask in self.subtasks.all()]
+        return task_dict
 
 class Subtask(db.Model):
     id = db.Column(db.Integer, primary_key=True)
