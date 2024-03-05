@@ -78,16 +78,21 @@ def delete_task(task_id):
     db.session.commit()
     return jsonify({"message": "Task deleted"}), 200
 
-# Create a Task
 @app.route('/tasks', methods=['POST'])
 @jwt_required()
 def create_task():
-    user_id = get_jwt_identity()  # Assuming you're storing user's ID in JWT identity
+    user_id = get_jwt_identity()
     data = request.get_json()
-    new_task = Task(user_id=user_id, title=data['title'], description=data['description'], status='todo')
+    new_task = Task(
+        user_id=user_id, 
+        title=data['title'], 
+        description=data['description'], 
+        status='todo',
+        parent_id=data.get('parent_id')  # Allow specifying parent task
+    )
     db.session.add(new_task)
     db.session.commit()
-    return jsonify(new_task.to_dict()), 201  # Ensure you have a method to serialize task
+    return jsonify(new_task.to_dict()), 201
 
 @app.route('/protected', methods=['GET'])
 @jwt_required()

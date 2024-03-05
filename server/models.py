@@ -12,11 +12,14 @@ class User(db.Model):
 
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.String(200))
-    status = db.Column(db.String(50), nullable=False, default='Standby')
+    title = db.Column(db.String(128), nullable=False)
+    description = db.Column(db.String(1024), nullable=True)
+    status = db.Column(db.String(50), nullable=False, default='todo')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    subtasks = db.relationship('Subtask', backref='parent_task', lazy=True)
+    parent_id = db.Column(db.Integer, db.ForeignKey('task.id'), nullable=True)
+    
+    subtasks = db.relationship('Task', backref=db.backref('parent', remote_side=[id]), lazy='dynamic')
+
     def to_dict(self):
         return {
             "id": self.id,
