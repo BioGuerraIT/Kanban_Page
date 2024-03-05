@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../styles/Dashboard.css";
 import { useNavigate } from "react-router-dom";
+import Task from "./Task";
 
 const initialColumns = {
   todo: [],
@@ -104,10 +105,7 @@ const Dashboard = () => {
           <div key={status} className={`column ${status}`}>
             <h2>{status.charAt(0).toUpperCase() + status.slice(1)}</h2>
             {tasks.map((task) => (
-              <div key={task.id} className="task-card">
-                <h3>{task.title}</h3>
-                <p>{task.description}</p>
-              </div>
+              <Task key={task.id} task={task} />
             ))}
           </div>
         ))}
