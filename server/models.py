@@ -30,7 +30,10 @@ class Task(db.Model):
             'user_id': self.user_id,
         }
         if include_subtasks:
-            task_dict['subtasks'] = [subtask.to_dict() for subtask in self.subtasks]
+            for subtask in self.subtasks:
+                task_dict['subtasks'] = [subtask.to_dict()]
+                if len(subtask.subtasks) > 0:
+                    task_dict['subtasks']['subsubtasks'] = [subsubtask.to_dict() for subsubtask in subtask['subtasks']]
         return task_dict
 
     @property

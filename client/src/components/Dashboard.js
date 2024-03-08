@@ -42,15 +42,35 @@ const Dashboard = () => {
 
 
   const handleTaskDelete = (deletedTaskId) => {
-    setColumns((prevColumns) => {
-      const updatedColumns = {...prevColumns};
-      // Iterate over each column (status)
-      Object.keys(updatedColumns).forEach(status => {
-        // Filter out the deleted task
-        updatedColumns[status] = updatedColumns[status].filter(task => task.id !== deletedTaskId);
+    const token = localStorage.getItem("token");
+    axios
+      .get("http://127.0.0.1:5000/tasks", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        console.log('Tasks before setting state:', response.data);
+        const fetchedTasks = response.data;
+        const newColumns = { ...initialColumns }; // Starts from a clean slate every time
+        fetchedTasks.forEach((task) => {
+          newColumns[task.status.toLowerCase()].push(task);
+        });
+        setColumns(newColumns); // Updates state once after processing all tasks
+      })
+      .catch((error) => {
+        console.error("Failed to fetch tasks:", error);
       });
-      return updatedColumns;
-    });
+      
+      setColumns((prevColumns) => {
+        const updatedColumns = {...prevColumns};
+        // Iterate over each column (status)
+        Object.keys(updatedColumns).forEach(status => {
+          // Filter out the deleted task
+          updatedColumns[status] = updatedColumns[status].filter(task => (task.id !== deletedTaskId));
+        });
+        return updatedColumns;
+      });
   };
 
   const handleLogout = () => {
@@ -88,7 +108,7 @@ const Dashboard = () => {
           <div key={status} className={`column ${status}`}>
             <h2>{status.charAt(0).toUpperCase() + status.slice(1)}</h2>
             {tasks.map((task) => (
-              <Task key={task.id} task={task} onTaskDelete={handleTaskDelete} />
+              <Task key={task.id} task={task} onTaskDelete={handleTaskDelete} addSubSubtask={false}/>
             ))}
           </div>
         ))}
