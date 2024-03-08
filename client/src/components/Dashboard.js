@@ -70,6 +70,18 @@ const Dashboard = () => {
       });
   };
 
+  const handleTaskDelete = (deletedTaskId) => {
+    setColumns((prevColumns) => {
+      const updatedColumns = {...prevColumns};
+      // Iterate over each column (status)
+      Object.keys(updatedColumns).forEach(status => {
+        // Filter out the deleted task
+        updatedColumns[status] = updatedColumns[status].filter(task => task.id !== deletedTaskId);
+      });
+      return updatedColumns;
+    });
+  };
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
@@ -105,7 +117,7 @@ const Dashboard = () => {
           <div key={status} className={`column ${status}`}>
             <h2>{status.charAt(0).toUpperCase() + status.slice(1)}</h2>
             {tasks.map((task) => (
-              <Task key={task.id} task={task} />
+              <Task key={task.id} task={task} onTaskDelete={handleTaskDelete} />
             ))}
           </div>
         ))}
