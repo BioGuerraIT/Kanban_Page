@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 const SubtaskForm = ({ depth = 0, onChange, onAddSubtask }) => {
-  if (depth > 3) return null; // Limit depth to 3 levels
+  if (depth > 2) return null; // Limit depth to 3 levels
 
   return (
     <div style={{ marginLeft: depth * 20 }}>
