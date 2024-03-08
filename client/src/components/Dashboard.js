@@ -3,6 +3,7 @@ import axios from "axios";
 import "../styles/Dashboard.css";
 import { useNavigate } from "react-router-dom";
 import Task from "./Task";
+import TaskForm from './TaskForm';
 
 const initialColumns = {
   todo: [],
@@ -87,6 +88,10 @@ const Dashboard = () => {
     navigate("/login");
   };
 
+  const handleTaskAdded = (newTask) => {
+    // Function to update UI after task is added
+  };
+
   return (
     <div className="dashboard">
       <h1>Kanban Board</h1>
@@ -94,24 +99,8 @@ const Dashboard = () => {
         Logout <i className="fas fa-sign-out-alt"></i>{" "}
       </button>
 
-      <form onSubmit={handleAddTask} className="add-task-form">
-        <input
-          type="text"
-          value={newTaskTitle}
-          onChange={(e) => setNewTaskTitle(e.target.value)}
-          placeholder="Task Title"
-          required
-        />
-        <textarea
-          value={newTaskDescription}
-          onChange={(e) => setNewTaskDescription(e.target.value)}
-          placeholder="Task Description"
-          required
-        />
-        <button type="submit" className="add-task-button">
-          Add Task
-        </button>
-      </form>
+      <TaskForm onTaskAdded={handleTaskAdded} />
+
       <div className="kanban-columns">
         {Object.entries(columns).map(([status, tasks]) => (
           <div key={status} className={`column ${status}`}>
