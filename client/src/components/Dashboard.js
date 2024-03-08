@@ -36,7 +36,7 @@ const Dashboard = () => {
       .catch((error) => {
         console.error("Failed to fetch tasks:", error);
       });
-  }, []);
+  }, []); //maybe remove the empty array
 
 
   const handleTaskDelete = (deletedTaskId) => {

@@ -33,16 +33,3 @@ class Task(db.Model):
         if include_subtasks and level < 3:  # Limit depth to 3 levels
             task_dict["subtasks"] = [subtask.to_dict(include_subtasks=True, level=level+1) for subtask in self.subtasks.all()]
         return task_dict
-
-class Subtask(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.String(200))
-    task_id = db.Column(db.Integer, db.ForeignKey('task.id'), nullable=False)
-    subsubtasks = db.relationship('SubSubtask', backref='parent_subtask', lazy=True)
-
-class SubSubtask(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.String(200))
-    subtask_id = db.Column(db.Integer, db.ForeignKey('subtask.id'), nullable=False)

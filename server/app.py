@@ -78,22 +78,39 @@ def delete_task(task_id):
     db.session.commit()
     return jsonify({"message": "Task deleted"}), 200
 
-@app.route('/tasks', methods=['POST'])
-@jwt_required()
-def create_subtasks(subtasks, parent_id=None):
+# Helper function to create subtasks
+def create_subtasks(subtasks, parent_id):
     for subtask_data in subtasks:
         new_subtask = Task(
             title=subtask_data['title'],
-            description=subtask_data['description'],
+            description=subtask_data.get('description', ''),
             user_id=get_jwt_identity(),
             parent_id=parent_id
         )
         db.session.add(new_subtask)
         db.session.commit()
-        if 'subtasks' in subtask_data:
+        # Recursively create nested subtasks
+        if 'subtasks' in subtask_data and len(subtask_data['subtasks']) > 0:
             create_subtasks(subtask_data['subtasks'], parent_id=new_subtask.id)
 
-# Modify the create_task endpoint to call this function for any subtasks
+@app.route('/tasks', methods=['POST'])
+@jwt_required()
+def create_task():
+    user_id = get_jwt_identity()
+    data = request.get_json()
+    new_task = Task(
+        user_id=user_id, 
+        title=data['title'], 
+        description=data.get('description', ''), 
+        status='todo',
+        parent_id=None  # Top-level task
+    )
+    db.session.add(new_task)
+    db.session.commit()
+    # Check if there are subtasks in the request and create them
+    if 'subtasks' in data and len(data['subtasks']) > 0:
+        create_subtasks(data['subtasks'], parent_id=new_task.id)
+    return jsonify(new_task.to_dict()), 201
 
 @app.route('/protected', methods=['GET'])
 @jwt_required()
