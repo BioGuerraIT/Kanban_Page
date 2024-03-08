@@ -18,7 +18,6 @@ const SubtaskForm = ({ depth = 0, subtask, onChange, onAddSubtask }) => {
         value={subtask.description}
         onChange={(e) => onChange(e.target.value, 'description')}
       />
-      <button type="button" onClick={onAddSubtask}>+ Add Sub(sub)task</button>
     </div>
   );
 };

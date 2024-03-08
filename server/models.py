@@ -20,16 +20,19 @@ class Task(db.Model):
 
     subtasks = db.relationship('Task', backref=db.backref('parent', remote_side=[id]), lazy='dynamic')
 
-    # Recursive to_dict method
-    def to_dict(self, include_subtasks=True, level=0):
+    def to_dict(self, include_subtasks=True):
         task_dict = {
-            "id": self.id,
-            "title": self.title,
-            "description": self.description,
-            "status": self.status,
-            "user_id": self.user_id,
-            "parent_id": self.parent_id
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'status': self.status,
+            'parent_id': self.parent_id,
+            'user_id': self.user_id,
         }
-        if include_subtasks and level < 3:  # Limit depth to 3 levels
-            task_dict["subtasks"] = [subtask.to_dict(include_subtasks=True, level=level+1) for subtask in self.subtasks.all()]
+        if include_subtasks:
+            task_dict['subtasks'] = [subtask.to_dict() for subtask in self.subtasks]
         return task_dict
+
+    @property
+    def subtasks(self):
+        return Task.query.filter_by(parent_id=self.id).all()

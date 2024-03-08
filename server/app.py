@@ -45,12 +45,13 @@ def login():
 
     return jsonify({"error": "Invalid email or password"}), 401
 
-# Get All Tasks for a User
 @app.route('/tasks', methods=['GET'])
 @jwt_required()
 def get_tasks():
     user_id = get_jwt_identity()
-    tasks = Task.query.filter_by(user_id=user_id).all()
+    # Fetch only top-level tasks
+    tasks = Task.query.filter_by(user_id=user_id, parent_id=None).all()
+    # Use the adjusted to_dict method to include subtasks
     return jsonify([task.to_dict() for task in tasks]), 200
 
 # Update a Task

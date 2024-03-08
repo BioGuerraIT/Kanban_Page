@@ -26,6 +26,7 @@ const Dashboard = () => {
         },
       })
       .then((response) => {
+        console.log(response.data)
         const fetchedTasks = response.data;
         const newColumns = { ...initialColumns };
         fetchedTasks.forEach((task) => {
@@ -57,30 +58,18 @@ const Dashboard = () => {
   };
 
   const handleTaskAdded = (newTask) => {
+    if (newTask.parent_id) return; // Ignore subtasks
+  
     setColumns((prevColumns) => {
-      // Clone the existing columns to avoid direct state mutation
       const updatedColumns = { ...prevColumns };
-  
-      // Assuming new tasks and their subtasks (if any) default to 'todo' status
-      // For tasks with different statuses, you might need additional logic to place them correctly
-      updatedColumns['todo'] = [...updatedColumns['todo'], newTask];
-  
-      // Recursively add subtasks (if the backend response includes them structured accordingly)
-      const addSubtasks = (task) => {
-        if (task.subtasks && task.subtasks.length > 0) {
-          task.subtasks.forEach((subtask) => {
-            updatedColumns[subtask.status.toLowerCase()] = [...updatedColumns[subtask.status.toLowerCase()], subtask];
-            addSubtasks(subtask); // Recursively add deeper levels of subtasks
-          });
-        }
-      };
-  
-      // Call the recursive function for the newly added task
-      addSubtasks(newTask);
-  
+      updatedColumns[newTask.status.toLowerCase()] = [
+        ...updatedColumns[newTask.status.toLowerCase()],
+        newTask,
+      ];
       return updatedColumns;
     });
   };
+  
   
 
   return (

@@ -24,7 +24,6 @@ const Task = ({ task, onTaskDelete }) => {
     <div className="task-card">
       <div className="task-actions">
         <button onClick={() => deleteTask(task.id)} className="delete-task-btn">X</button>
-        {/* Add Subtask Button will go here */}
       </div>
       <h3>{task.title}</h3>
       <p>{task.description}</p>
