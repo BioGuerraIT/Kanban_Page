@@ -17,7 +17,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setColumns(initialColumns); // Reset columns to initial state
+    // Removed the line that resets columns to initial state here to prevent setting it twice
     const token = localStorage.getItem("token");
     axios
       .get("http://127.0.0.1:5000/tasks", {
@@ -26,18 +26,19 @@ const Dashboard = () => {
         },
       })
       .then((response) => {
-        console.log(response.data)
+        console.log('Tasks before setting state:', response.data);
         const fetchedTasks = response.data;
-        const newColumns = { ...initialColumns };
+        const newColumns = { ...initialColumns }; // Starts from a clean slate every time
         fetchedTasks.forEach((task) => {
           newColumns[task.status.toLowerCase()].push(task);
         });
-        setColumns(newColumns);
+        setColumns(newColumns); // Updates state once after processing all tasks
       })
       .catch((error) => {
         console.error("Failed to fetch tasks:", error);
       });
-  }, []); //maybe remove the empty array
+  }, []); // Keeping the empty dependency array to ensure this runs only once on component mount
+  
 
 
   const handleTaskDelete = (deletedTaskId) => {
@@ -53,6 +54,7 @@ const Dashboard = () => {
   };
 
   const handleLogout = () => {
+    setColumns(initialColumns); // Explicitly reset the columns state on logout
     localStorage.removeItem("token");
     navigate("/login");
   };
