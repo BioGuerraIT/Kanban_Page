@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
+import '../styles/TaskForm.css';
 import axios from 'axios';
+
 
 const SubtaskForm = ({ depth = 0, subtask, onChange, onAddSubtask }) => {
   if (depth >= 3) return null; // Prevents adding beyond sub-subtasks
 
   return (
-    <div style={{ marginLeft: `${depth * 20}px` }}>
+    <div className={`subtask-form depth-${depth}`}>
       <input
         type="text"
         placeholder="Subtask Title"
@@ -68,7 +70,6 @@ const TaskForm = ({ onTaskAdded }) => {
     }
   };
   
-
   const renderSubtasks = (subtasks, depth = 0, path = []) => {
     return subtasks.map((subtask, index) => (
       <SubtaskForm
@@ -82,7 +83,7 @@ const TaskForm = ({ onTaskAdded }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="task-form">
       <input
         name="title"
         type="text"
@@ -99,8 +100,10 @@ const TaskForm = ({ onTaskAdded }) => {
         required
       />
       {renderSubtasks(task.subtasks)}
-      <button type="button" onClick={() => addSubtask([])}>+ Add Subtask</button>
-      <button type="submit">Create Task</button>
+      <div className="buttons">
+        <button type="button" className="add-subtask" onClick={() => addSubtask([])}>+ Add Subtask</button>
+        <button type="submit" className="create-task">Create Task</button>
+      </div>
     </form>
   );
 };
