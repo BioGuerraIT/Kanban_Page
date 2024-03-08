@@ -14,8 +14,6 @@ const initialColumns = {
 
 const Dashboard = () => {
   const [columns, setColumns] = useState(initialColumns);
-  const [newTaskTitle, setNewTaskTitle] = useState("");
-  const [newTaskDescription, setNewTaskDescription] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,36 +38,6 @@ const Dashboard = () => {
       });
   }, []);
 
-  const handleAddTask = (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem("token");
-    axios
-      .post(
-        "http://127.0.0.1:5000/tasks",
-        {
-          title: newTaskTitle,
-          description: newTaskDescription,
-          status: "todo", // Assuming new tasks default to 'todo'
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-      .then((response) => {
-        const addedTask = response.data;
-        setColumns((prevColumns) => ({
-          ...prevColumns,
-          todo: [...prevColumns.todo, addedTask],
-        }));
-        setNewTaskTitle("");
-        setNewTaskDescription("");
-      })
-      .catch((error) => {
-        console.error("Error adding task:", error);
-      });
-  };
 
   const handleTaskDelete = (deletedTaskId) => {
     setColumns((prevColumns) => {
@@ -89,8 +57,31 @@ const Dashboard = () => {
   };
 
   const handleTaskAdded = (newTask) => {
-    // Function to update UI after task is added
+    setColumns((prevColumns) => {
+      // Clone the existing columns to avoid direct state mutation
+      const updatedColumns = { ...prevColumns };
+  
+      // Assuming new tasks and their subtasks (if any) default to 'todo' status
+      // For tasks with different statuses, you might need additional logic to place them correctly
+      updatedColumns['todo'] = [...updatedColumns['todo'], newTask];
+  
+      // Recursively add subtasks (if the backend response includes them structured accordingly)
+      const addSubtasks = (task) => {
+        if (task.subtasks && task.subtasks.length > 0) {
+          task.subtasks.forEach((subtask) => {
+            updatedColumns[subtask.status.toLowerCase()] = [...updatedColumns[subtask.status.toLowerCase()], subtask];
+            addSubtasks(subtask); // Recursively add deeper levels of subtasks
+          });
+        }
+      };
+  
+      // Call the recursive function for the newly added task
+      addSubtasks(newTask);
+  
+      return updatedColumns;
+    });
   };
+  
 
   return (
     <div className="dashboard">

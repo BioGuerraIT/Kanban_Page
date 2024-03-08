@@ -78,6 +78,8 @@ def delete_task(task_id):
     db.session.commit()
     return jsonify({"message": "Task deleted"}), 200
 
+@app.route('/tasks', methods=['POST'])
+@jwt_required()
 def create_subtasks(subtasks, parent_id=None):
     for subtask_data in subtasks:
         new_subtask = Task(
